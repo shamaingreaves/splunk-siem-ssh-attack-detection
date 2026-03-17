@@ -127,6 +127,31 @@ This query aggregates authentication failures and highlights the affected system
 
 ---
 
+# Indicators of Compromise (IOCs)
+
+The following indicators were identified during the investigation:
+
+| Indicator | Description |
+|----------|-------------|
+| Source IP | 192.168.56.101 |
+| Target System | Ubuntu Server |
+| Target Port | 22 (SSH) |
+| Attack Type | SSH Brute Force / Unauthorized Login Attempt |
+| Log Source | /var/log/auth.log |
+
+These indicators confirm multiple unauthorized login attempts against the SSH service.
+
+# Detection Rule
+
+The following Splunk query can be used to detect repeated failed SSH login attempts:
+
+```
+index=auth source="/var/log/auth.log" "Failed password"
+| stats count by src_ip
+| where count > 5
+```
+This detection rule identifies potential brute-force attempts by counting repeated failed login attempts from a single source IP.
+
 # Investigation Summary
 
 The SIEM investigation successfully identified a simulated SSH brute-force login attempt against the Ubuntu server.
